@@ -1,0 +1,101 @@
+
+<html>
+    <head>
+       <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    </head>
+
+    <body>
+       <script>
+               
+                var svg = d3.select("body").append("svg").attr("width", '100%').attr("height", '100%')
+
+                var height = 600;
+                var width = 1000;
+                var padding = 100;
+
+                var data = [
+                  { date: '2014-01-01', amount: 5 },
+                  { date: '2014-01-15', amount: 6 },
+                  { date: '2014-01-30', amount: 14 },
+                  { date: '2014-02-15', amount: 30 },
+                  { date: '2014-02-30', amount: 50 }
+                ];
+                        
+                var y = d3.scale.linear()
+                  .domain([0, 80]) // 0 projects to 60 projects
+                  .range([height+padding, padding]); // Seems backwards because SVG is y-down
+
+
+                var x = d3.time.scale()
+                    .domain([
+                      new Date(Date.parse('2014-01-01')), // min date
+                      new Date(Date.parse('2014-06-01'))  // max date
+                    ])
+                    .range([padding, width - padding]);
+
+                svg.selectAll('circle')
+                  .data(data)
+                  .enter()
+                  .append('circle')
+                  .attr('r', function(d,i){return 15})
+                  .attr('cx', function(d,i){return x(new Date(Date.parse(d.date)));})
+                  .attr('cy', function(d,i){return y(d.amount);})
+                  .attr('fill', function(d,i) { return '#E5637C'});
+
+
+                //AXIS
+                var xAxis = d3.svg.axis()
+                  .scale(x)         // x is the d3.time.scale()
+                  .orient('bottom') // the ticks go below the graph
+                  .ticks(4);        // specify the number of tick
+
+                var yAxis = d3.svg.axis()
+                  .scale(y)         // x is the d3.time.scale()
+                  .orient('left') // the ticks go below the graph
+                  .ticks(4);        // specify the number of tick
+
+                svg.append('g')            // create a <g> element
+                  .attr('class', 'x axis') // specify classes
+                  .attr('transform', 'translate(0,'+(height+padding)+')')
+                  .call(xAxis);
+
+                svg.append('g')            // create a <g> element
+                  .attr('class', 'y axis') // specify classes
+                  .attr('transform', 'translate('+padding+',0)')
+                  .call(yAxis); 
+
+
+
+                var mult = 0.5;
+                function update() {
+                  mult = (mult==0.5) ? 2 : 0.5;
+                  for(var i in data) {
+                    data[i].amount = data[i].amount/mult;
+                  }
+                  var circles = svg.selectAll('circle')
+                    .data(data);
+
+                  // When we enter, we just want to create the rect,
+                  
+
+                  // We configure the rects here so the values
+                  // apply to it applies to both new and existing
+                  // rects
+                  circles
+                      .transition() 
+                      .attr('cy', function(d,i){return  y(d.amount);})
+                      .duration(1000);
+                  circles.exit()
+                      .transition()
+                      .attr('r', function(d,i){return 0})
+                      .duration(750)
+                      .remove();  
+
+                };
+        </script>
+
+        <button onclick="update()">Toggle</button>
+        
+          </body>
+</html>
