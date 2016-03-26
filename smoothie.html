@@ -1,0 +1,50 @@
+
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <style>
+        .graph .axis {
+            stroke-width: 1;
+        }
+
+        .graph .axis .tick line {
+            stroke: black;
+        }
+
+        .graph .axis .tick text {
+            fill: black;
+            font-size: 0.7em;
+        }
+
+        .graph .axis .domain {
+            fill: none;
+            stroke: black;
+        }
+
+        .graph .path {
+            stroke-width:3px;
+            fill: none;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="graph"></div>
+        <script type="text/javascript" src="smoothie.js"></script>
+        <canvas id="mycanvas" width="700" height="400"></canvas>
+        <script>
+
+            var smoothie = new SmoothieChart();
+            smoothie.streamTo(document.getElementById("mycanvas"), 1000);
+            var line1 = new TimeSeries();
+            smoothie.addTimeSeries(line1);
+            setInterval(function(){ 
+            //Call api, get data, append data
+
+                line1.append(new Date().getTime(), Math.random());
+            }, 1000)
+        </script>
+
+        
+    </body>
+</html>
